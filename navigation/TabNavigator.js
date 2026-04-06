@@ -1,8 +1,11 @@
-import React from 'react';
-import { Text, View } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { Animated, View } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { Ionicons } from '@expo/vector-icons';
 import HomeStack from './HomeStack';
+import ExploreScreen from '../screens/ExploreScreen';
 import MyCoursesScreen from '../screens/MyCoursesScreen';
+import TeachScreen from '../screens/TeachScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 
 const Tab = createBottomTabNavigator();
@@ -10,34 +13,51 @@ const Tab = createBottomTabNavigator();
 const TAB_META = {
   HomeTab: {
     label: 'Home',
-    icon: 'H',
+    iconName: 'home-outline',
+    activeIconName: 'home',
+  },
+  ExploreTab: {
+    label: 'Explore',
+    iconName: 'search-outline',
+    activeIconName: 'search',
   },
   MyCoursesTab: {
-    label: 'My Courses',
-    icon: 'M',
+    label: 'My Learning',
+    iconName: 'play-circle-outline',
+    activeIconName: 'play-circle',
+  },
+  TeachTab: {
+    label: 'Teach',
+    iconName: 'create-outline',
+    activeIconName: 'create',
   },
   ProfileTab: {
     label: 'Profile',
-    icon: 'P',
+    iconName: 'person-outline',
+    activeIconName: 'person',
   },
 };
 
 const TabIcon = ({ color, focused, routeName }) => {
   const meta = TAB_META[routeName];
+  const scale = useRef(new Animated.Value(1)).current;
+
+  useEffect(() => {
+    Animated.spring(scale, {
+      toValue: focused ? 1.2 : 1,
+      useNativeDriver: true,
+      friction: 5,
+    }).start();
+  }, [focused]);
 
   return (
-    <View
-      style={{
-        minWidth: 44,
-        height: 32,
-        borderRadius: 16,
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: focused ? 'rgba(99, 102, 241, 0.18)' : 'transparent',
-      }}
-    >
-      <Text style={{ color, fontSize: 16, fontWeight: '800' }}>{meta.icon}</Text>
-    </View>
+    <Animated.View style={{ transform: [{ scale }] }}>
+      <Ionicons
+        name={focused ? meta.activeIconName : meta.iconName}
+        size={24}
+        color={color}
+      />
+    </Animated.View>
   );
 };
 
@@ -81,11 +101,27 @@ export default function TabNavigator() {
         }}
       />
       <Tab.Screen
+        name="ExploreTab"
+        component={ExploreScreen}
+        options={{
+          title: TAB_META.ExploreTab.label,
+          tabBarLabel: TAB_META.ExploreTab.label,
+        }}
+      />
+      <Tab.Screen
         name="MyCoursesTab"
         component={MyCoursesScreen}
         options={{
           title: TAB_META.MyCoursesTab.label,
           tabBarLabel: TAB_META.MyCoursesTab.label,
+        }}
+      />
+      <Tab.Screen
+        name="TeachTab"
+        component={TeachScreen}
+        options={{
+          title: TAB_META.TeachTab.label,
+          tabBarLabel: TAB_META.TeachTab.label,
         }}
       />
       <Tab.Screen

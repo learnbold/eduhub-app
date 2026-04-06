@@ -1,5 +1,6 @@
 import React from 'react';
-import { Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '../context/AuthContext';
 
 export default function ProfileScreen({ navigation }) {
@@ -19,7 +20,7 @@ export default function ProfileScreen({ navigation }) {
       <View style={styles.screen}>
         <View style={styles.header}>
           <View>
-            <Text style={styles.brand}>EduHub</Text>
+            <Text style={styles.brand}>Sparklass</Text>
             <Text style={styles.subtitle}>Profile</Text>
           </View>
           <View style={styles.avatar}>

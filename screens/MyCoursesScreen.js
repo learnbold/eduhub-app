@@ -1,5 +1,6 @@
 import React from 'react';
-import { Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function MyCoursesScreen({ navigation }) {
   return (
@@ -7,7 +8,7 @@ export default function MyCoursesScreen({ navigation }) {
       <View style={styles.screen}>
         <View style={styles.topBar}>
           <View>
-            <Text style={styles.brand}>EduHub</Text>
+            <Text style={styles.brand}>Sparklass</Text>
             <Text style={styles.subtitle}>My Courses</Text>
           </View>
           <View style={styles.badge}>

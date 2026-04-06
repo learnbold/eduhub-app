@@ -1,12 +1,15 @@
 {
   "expo": {
-    "name": "EduHub",
+    "name": "Sparklass",
     "slug": "eduhub",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "eduhub",
+    "scheme": "sparklass",
     "userInterfaceStyle": "automatic",
+    "plugins": [
+      "expo-av"
+    ],
     "ios": {
       "icon": "./assets/expo.icon"
     },
@@ -17,7 +20,8 @@
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.anonymous.eduhub"
     },
     "web": {
       "favicon": "./assets/images/favicon.png"

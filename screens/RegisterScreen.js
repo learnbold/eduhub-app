@@ -5,7 +5,6 @@ import {
   KeyboardAvoidingView,
   Platform,
   Pressable,
-  SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
@@ -13,6 +12,7 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { CommonActions } from '@react-navigation/native';
 import { useAuth } from '../context/AuthContext';
@@ -78,6 +78,7 @@ export default function RegisterScreen({ navigation }) {
       });
       goToMainApp(navigation);
     } catch (submitError) {
+      console.log('Register screen submit error:', submitError?.response || submitError);
       setError(
         submitError?.response?.data?.message ||
           submitError?.message ||
@@ -104,7 +105,7 @@ export default function RegisterScreen({ navigation }) {
           >
             <View style={styles.glow} />
             <View style={styles.header}>
-              <Text style={styles.eyebrow}>EduHub</Text>
+              <Text style={styles.eyebrow}>Sparklass</Text>
               <Text style={styles.title}>Create Account</Text>
               <Text style={styles.subtitle}>Start your journey</Text>
             </View>

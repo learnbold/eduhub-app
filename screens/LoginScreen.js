@@ -5,7 +5,6 @@ import {
   KeyboardAvoidingView,
   Platform,
   Pressable,
-  SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
@@ -13,6 +12,7 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { CommonActions } from '@react-navigation/native';
 import { useAuth } from '../context/AuthContext';
@@ -73,6 +73,7 @@ export default function LoginScreen({ navigation }) {
       });
       goToMainApp(navigation);
     } catch (submitError) {
+      console.log('Login screen submit error:', submitError?.response || submitError);
       setError(
         submitError?.response?.data?.message ||
           submitError?.message ||
@@ -99,7 +100,7 @@ export default function LoginScreen({ navigation }) {
           >
             <View style={styles.glow} />
             <View style={styles.header}>
-              <Text style={styles.eyebrow}>EduHub</Text>
+              <Text style={styles.eyebrow}>Sparklass</Text>
               <Text style={styles.title}>Welcome Back</Text>
               <Text style={styles.subtitle}>Continue learning</Text>
             </View>
