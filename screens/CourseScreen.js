@@ -69,7 +69,8 @@ export default function CourseScreen({ navigation, route }) {
         }
 
         setError('Failed to load course');
-      } catch {
+      } catch (fetchError) {
+        console.log('Course screen load error:', fetchError?.response || fetchError);
         const mockCourse = mockCourses.find((item) => item.slug === slug);
 
         if (mockCourse) {
@@ -113,8 +114,9 @@ export default function CourseScreen({ navigation, route }) {
       setActionError('');
       await enroll(course._id);
       navigation.navigate('Player', { courseId: course._id });
-    } catch {
-      setActionError('Unable to enroll right now. Please try again.');
+    } catch (enrollError) {
+      console.log('Enroll error:', enrollError?.response || enrollError);
+      setActionError(enrollError?.message || 'Unable to enroll right now. Please try again.');
     } finally {
       setIsEnrolling(false);
     }

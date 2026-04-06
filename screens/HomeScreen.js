@@ -38,7 +38,8 @@ export default function HomeScreen({ navigation }) {
         if (!nextCourses.length) {
           setPreviewMessage('Catalog is empty right now. Showing sample courses for visual preview.');
         }
-      } catch {
+      } catch (error) {
+        console.log('Home screen course load error:', error?.response || error);
         setCourses([]);
         setPreviewMessage('Live courses are unavailable. Showing sample courses for visual preview.');
       } finally {

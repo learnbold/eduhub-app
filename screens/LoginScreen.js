@@ -73,6 +73,7 @@ export default function LoginScreen({ navigation }) {
       });
       goToMainApp(navigation);
     } catch (submitError) {
+      console.log('Login screen submit error:', submitError?.response || submitError);
       setError(
         submitError?.response?.data?.message ||
           submitError?.message ||

@@ -78,6 +78,7 @@ export default function RegisterScreen({ navigation }) {
       });
       goToMainApp(navigation);
     } catch (submitError) {
+      console.log('Register screen submit error:', submitError?.response || submitError);
       setError(
         submitError?.response?.data?.message ||
           submitError?.message ||
