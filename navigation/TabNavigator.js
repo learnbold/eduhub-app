@@ -2,7 +2,9 @@ import React from 'react';
 import { Text, View } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import HomeStack from './HomeStack';
+import ExploreScreen from '../screens/ExploreScreen';
 import MyCoursesScreen from '../screens/MyCoursesScreen';
+import TeachScreen from '../screens/TeachScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 
 const Tab = createBottomTabNavigator();
@@ -12,9 +14,17 @@ const TAB_META = {
     label: 'Home',
     icon: 'H',
   },
+  ExploreTab: {
+    label: 'Explore',
+    icon: 'E',
+  },
   MyCoursesTab: {
-    label: 'My Courses',
+    label: 'My Learning',
     icon: 'M',
+  },
+  TeachTab: {
+    label: 'Teach',
+    icon: 'T',
   },
   ProfileTab: {
     label: 'Profile',
@@ -81,11 +91,27 @@ export default function TabNavigator() {
         }}
       />
       <Tab.Screen
+        name="ExploreTab"
+        component={ExploreScreen}
+        options={{
+          title: TAB_META.ExploreTab.label,
+          tabBarLabel: TAB_META.ExploreTab.label,
+        }}
+      />
+      <Tab.Screen
         name="MyCoursesTab"
         component={MyCoursesScreen}
         options={{
           title: TAB_META.MyCoursesTab.label,
           tabBarLabel: TAB_META.MyCoursesTab.label,
+        }}
+      />
+      <Tab.Screen
+        name="TeachTab"
+        component={TeachScreen}
+        options={{
+          title: TAB_META.TeachTab.label,
+          tabBarLabel: TAB_META.TeachTab.label,
         }}
       />
       <Tab.Screen

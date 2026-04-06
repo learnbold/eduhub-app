@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "EduHub",
+    "name": "Sparklass",
     "slug": "eduhub",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "eduhub",
+    "scheme": "sparklass",
     "userInterfaceStyle": "automatic",
     "ios": {
       "icon": "./assets/expo.icon"

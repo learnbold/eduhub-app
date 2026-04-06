@@ -3,12 +3,12 @@ import {
   ActivityIndicator,
   FlatList,
   Pressable,
-  SafeAreaView,
   StyleSheet,
   Text,
   TextInput,
   View,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import CourseCard from '../components/CourseCard';
 import { mockCourses } from '../data/mockCourses';
@@ -56,7 +56,7 @@ export default function HomeScreen({ navigation }) {
     <View style={styles.headerBlock}>
       <View style={styles.topBar}>
         <View>
-          <Text style={styles.topBarTitle}>EduHub</Text>
+          <Text style={styles.topBarTitle}>Sparklass</Text>
           <Text style={styles.topBarSubtitle}>Premium mobile learning</Text>
         </View>
         <Pressable
@@ -70,7 +70,7 @@ export default function HomeScreen({ navigation }) {
       <View style={styles.heroBackdrop} />
       <View style={styles.heroCard}>
         <Text style={styles.eyebrow}>Premium learning, curated for mobile</Text>
-        <Text style={styles.brand}>EduHub</Text>
+        <Text style={styles.brand}>Sparklass</Text>
         <Text style={styles.subtitle}>Explore Courses</Text>
         <View style={styles.summaryRow}>
           <View style={styles.summaryPill}>
