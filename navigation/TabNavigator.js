@@ -7,7 +7,6 @@ import ExploreScreen from '../screens/ExploreScreen';
 import MyCoursesScreen from '../screens/MyCoursesScreen';
 import TeachScreen from '../screens/TeachScreen';
 import ProfileScreen from '../screens/ProfileScreen';
-import { useAuth } from '../context/AuthContext';
 
 const Tab = createBottomTabNavigator();
 
@@ -63,9 +62,6 @@ const TabIcon = ({ color, focused, routeName }) => {
 };
 
 export default function TabNavigator() {
-  const { user } = useAuth();
-  const isTeacher = user?.role === 'teacher';
-
   return (
     <Tab.Navigator
       id="MainTabs"
@@ -120,16 +116,14 @@ export default function TabNavigator() {
           tabBarLabel: TAB_META.MyCoursesTab.label,
         }}
       />
-      {isTeacher && (
-        <Tab.Screen
-          name="TeachTab"
-          component={TeachScreen}
-          options={{
-            title: TAB_META.TeachTab.label,
-            tabBarLabel: TAB_META.TeachTab.label,
-          }}
-        />
-      )}
+      <Tab.Screen
+        name="TeachTab"
+        component={TeachScreen}
+        options={{
+          title: TAB_META.TeachTab.label,
+          tabBarLabel: TAB_META.TeachTab.label,
+        }}
+      />
       <Tab.Screen
         name="ProfileTab"
         component={ProfileScreen}

@@ -5,6 +5,7 @@ import {
   LEGACY_USER_STORAGE_KEY,
   TOKEN_STORAGE_KEY,
   USER_STORAGE_KEY,
+  becomeTeacher as becomeTeacherRequest,
   login as loginRequest,
   register as registerRequest,
   setAuthToken,
@@ -126,6 +127,22 @@ export function AuthProvider({ children }) {
     }
   };
 
+  const becomeTeacher = async () => {
+    try {
+      const response = await becomeTeacherRequest();
+      await persistAuth({
+        token,
+        user: response?.user,
+        hub: response?.hub,
+        role: response?.user?.role || user?.role || 'teacher',
+      });
+      return response;
+    } catch (error) {
+      console.log('Become teacher error response:', error?.response || error);
+      throw error;
+    }
+  };
+
   const logout = async () => {
     await persistAuth(null);
   };
@@ -138,9 +155,10 @@ export function AuthProvider({ children }) {
       isAuthenticated: Boolean(token),
       login,
       register,
+      becomeTeacher,
       logout,
     }),
-    [token, user, isHydrating]
+    [token, user, isHydrating, becomeTeacher]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
