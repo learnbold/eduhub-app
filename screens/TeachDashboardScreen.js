@@ -18,6 +18,7 @@ import TeacherCourseCard from '../components/TeacherCourseCard';
 import UploadButton from '../components/UploadButton';
 import { useAuth } from '../context/AuthContext';
 import {
+  addCourseToBatch,
   createBatch,
   fetchManagedHubBatches,
   fetchManagedHubVideos,
@@ -51,12 +52,16 @@ export default function TeachDashboardScreen({ navigation }) {
   const [workspaceLoading, setWorkspaceLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const [hub, setHub] = useState(null);
   const [batches, setBatches] = useState([]);
   const [courses, setCourses] = useState([]);
   const [videos, setVideos] = useState([]);
   const [batchModalVisible, setBatchModalVisible] = useState(false);
+  const [courseBatchModalVisible, setCourseBatchModalVisible] = useState(false);
+  const [selectedCourse, setSelectedCourse] = useState(null);
   const [creatingBatch, setCreatingBatch] = useState(false);
+  const [attachingCourseToBatch, setAttachingCourseToBatch] = useState(false);
   const [batchForm, setBatchForm] = useState(initialBatchForm);
 
   const loadWorkspace = async ({ silent = false } = {}) => {
@@ -84,6 +89,9 @@ export default function TeachDashboardScreen({ navigation }) {
       setCourses(Array.isArray(nextCourses) ? nextCourses : []);
       setVideos(Array.isArray(nextVideos) ? nextVideos : []);
       setError('');
+      if (!silent) {
+        setSuccess('');
+      }
     } catch (loadError) {
       console.log('Teach dashboard load error:', loadError?.response || loadError);
       setError(loadError?.message || 'Unable to load your teacher hub right now.');
@@ -110,6 +118,14 @@ export default function TeachDashboardScreen({ navigation }) {
     setBatchModalVisible(false);
     setBatchForm(initialBatchForm);
   };
+
+  const closeCourseBatchModal = () => {
+    setCourseBatchModalVisible(false);
+    setSelectedCourse(null);
+  };
+
+  const getAvailableBatchesForCourse = (course) =>
+    batches.filter((batch) => !(course?.batchSummaries || []).some((summary) => summary._id === batch._id));
 
   const showUpgradeShell = !isHydrating && (!isAuthenticated || !hasDashboardAccess);
 
@@ -266,6 +282,16 @@ export default function TeachDashboardScreen({ navigation }) {
             onPress={() => {}}
             onEdit={() => {}}
             onPublish={() => {}}
+            onAddToBatch={() => {
+              setError('');
+              setSuccess('');
+              setSelectedCourse(course);
+              setCourseBatchModalVisible(true);
+            }}
+            addToBatchDisabled={getAvailableBatchesForCourse(course).length === 0}
+            addToBatchLabel={
+              getAvailableBatchesForCourse(course).length === 0 ? 'In Every Batch' : 'Add to Batch'
+            }
           />
         ))
       ) : (
@@ -386,6 +412,11 @@ export default function TeachDashboardScreen({ navigation }) {
           {error ? (
             <View style={styles.errorBanner}>
               <Text style={styles.errorBannerText}>{error}</Text>
+            </View>
+          ) : null}
+          {success ? (
+            <View style={styles.successBanner}>
+              <Text style={styles.successBannerText}>{success}</Text>
             </View>
           ) : null}
 
@@ -510,6 +541,72 @@ export default function TeachDashboardScreen({ navigation }) {
           </View>
         </View>
       </Modal>
+
+      <Modal animationType="slide" transparent visible={courseBatchModalVisible}>
+        <View style={styles.modalBackdrop}>
+          <View style={styles.modalCard}>
+            <Text style={styles.modalTitle}>Add Course to Batch</Text>
+            <Text style={styles.emptyText}>
+              {selectedCourse?.title || 'This course'} can be reused across multiple batches. Pick where it should
+              unlock next.
+            </Text>
+
+            <ScrollView showsVerticalScrollIndicator={false}>
+              {getAvailableBatchesForCourse(selectedCourse).length ? (
+                getAvailableBatchesForCourse(selectedCourse).map((batch) => (
+                  <Pressable
+                    key={batch._id}
+                    onPress={async () => {
+                      if (!selectedCourse?._id || attachingCourseToBatch) {
+                        return;
+                      }
+
+                      try {
+                        setAttachingCourseToBatch(true);
+                        setError('');
+                        setSuccess('');
+                        await addCourseToBatch(batch._id, selectedCourse._id);
+                        await loadWorkspace({ silent: true });
+                        closeCourseBatchModal();
+                        setSuccess(`"${selectedCourse.title}" was added to "${batch.title}".`);
+                      } catch (attachError) {
+                        setError(attachError?.message || 'Unable to add this course to the selected batch.');
+                      } finally {
+                        setAttachingCourseToBatch(false);
+                      }
+                    }}
+                    style={({ pressed }) => [
+                      styles.selectionCard,
+                      pressed ? styles.buttonPressed : null,
+                    ]}
+                  >
+                    <View style={styles.copyBlock}>
+                      <Text style={styles.memberName}>{batch.title}</Text>
+                      <Text style={styles.memberMeta}>
+                        {batch.courseCount || 0} courses - {batch.videoCount || 0} videos - {batch.studentCount || 0} students
+                      </Text>
+                    </View>
+                    <Ionicons name="add-circle-outline" size={22} color="#E0E7FF" />
+                  </Pressable>
+                ))
+              ) : (
+                <View style={styles.sectionCard}>
+                  <Text style={styles.emptyText}>This course is already attached to every available batch.</Text>
+                </View>
+              )}
+            </ScrollView>
+
+            <View style={styles.modalActions}>
+              <Pressable
+                onPress={closeCourseBatchModal}
+                style={({ pressed }) => [styles.modalGhostButton, pressed ? styles.buttonPressed : null]}
+              >
+                <Text style={styles.modalGhostText}>Close</Text>
+              </Pressable>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -561,6 +658,8 @@ const styles = StyleSheet.create({
   settingValue: { color: '#F8FAFC', fontSize: 14, fontWeight: '700' },
   errorBanner: { borderRadius: 16, backgroundColor: 'rgba(239, 68, 68, 0.14)', borderWidth: 1, borderColor: 'rgba(248, 113, 113, 0.28)', padding: 14 },
   errorBannerText: { color: '#FECACA', fontSize: 13, fontWeight: '700' },
+  successBanner: { borderRadius: 16, backgroundColor: 'rgba(34, 197, 94, 0.14)', borderWidth: 1, borderColor: 'rgba(134, 239, 172, 0.28)', padding: 14 },
+  successBannerText: { color: '#BBF7D0', fontSize: 13, fontWeight: '700' },
   emptyText: { color: '#94A3B8', fontSize: 14, lineHeight: 22 },
   accessShell: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 18 },
   accessCard: { width: '100%', borderRadius: 28, backgroundColor: '#172033', borderWidth: 1, borderColor: 'rgba(148, 163, 184, 0.12)', padding: 22, gap: 14 },
@@ -576,6 +675,7 @@ const styles = StyleSheet.create({
   modalActions: { flexDirection: 'row', justifyContent: 'space-between', gap: 12, marginTop: 6 },
   modalGhostButton: { minHeight: 48, minWidth: 90, borderRadius: 16, backgroundColor: '#111827', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 16 },
   modalGhostText: { color: '#CBD5E1', fontSize: 14, fontWeight: '700' },
+  selectionCard: { borderRadius: 18, backgroundColor: '#111827', borderWidth: 1, borderColor: 'rgba(148, 163, 184, 0.12)', padding: 16, marginBottom: 12, flexDirection: 'row', alignItems: 'center', gap: 12 },
   input: { minHeight: 50, borderRadius: 16, backgroundColor: '#111827', borderWidth: 1, borderColor: 'rgba(148, 163, 184, 0.12)', paddingHorizontal: 16, color: '#F8FAFC', fontSize: 15, fontWeight: '600', marginBottom: 12 },
   textarea: { minHeight: 96, paddingTop: 14, textAlignVertical: 'top' },
   buttonPressed: { opacity: 0.92 },

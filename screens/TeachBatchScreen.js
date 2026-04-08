@@ -194,6 +194,9 @@ export default function TeachBatchScreen({ navigation, route }) {
 
           <View style={styles.heroCard}>
             <Text style={styles.heroPrice}>{formatBatchPrice(batch.price)}</Text>
+            <Text style={styles.heroMetaText}>
+              {batch.isPublished ? 'Published batch' : 'Draft batch'} - {batch.subscriptionType || 'one_time'}
+            </Text>
             <Text style={styles.heroDescription}>
               {batch.description || 'A bundled access experience for courses, standalone videos, and future notes.'}
             </Text>
@@ -312,6 +315,10 @@ export default function TeachBatchScreen({ navigation, route }) {
                   <View key={student._id} style={styles.itemCard}>
                     <Text style={styles.itemTitle}>{student.displayName}</Text>
                     <Text style={styles.itemMeta}>{student.email || 'No email available'}</Text>
+                    <Text style={styles.itemMeta}>
+                      {student.enrollmentStatus || 'active'}
+                      {student.joinedAt ? ` - Joined ${new Date(student.joinedAt).toLocaleDateString()}` : ''}
+                    </Text>
                   </View>
                 ))
               ) : (
@@ -351,6 +358,7 @@ const styles = StyleSheet.create({
   subtitle: { color: '#94A3B8', fontSize: 14, fontWeight: '600' },
   heroCard: { borderRadius: 24, backgroundColor: '#172033', borderWidth: 1, borderColor: 'rgba(148, 163, 184, 0.12)', padding: 18, gap: 14 },
   heroPrice: { color: '#C7D2FE', fontSize: 16, fontWeight: '800' },
+  heroMetaText: { color: '#94A3B8', fontSize: 12, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.8 },
   heroDescription: { color: '#CBD5E1', fontSize: 14, lineHeight: 22 },
   statsRow: { flexDirection: 'row', gap: 10 },
   statTile: { flex: 1, borderRadius: 18, backgroundColor: '#111827', padding: 14, gap: 4 },
