@@ -3,9 +3,9 @@ import { Animated, View } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import HomeStack from './HomeStack';
+import TeachStack from './TeachStack';
 import ExploreScreen from '../screens/ExploreScreen';
 import MyCoursesScreen from '../screens/MyCoursesScreen';
-import TeachScreen from '../screens/TeachScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 
 const Tab = createBottomTabNavigator();
@@ -118,7 +118,7 @@ export default function TabNavigator() {
       />
       <Tab.Screen
         name="TeachTab"
-        component={TeachScreen}
+        component={TeachStack}
         options={{
           title: TAB_META.TeachTab.label,
           tabBarLabel: TAB_META.TeachTab.label,
