@@ -14,7 +14,15 @@ const getStatusLabel = (course) => {
   return 'Draft';
 };
 
-export default function TeacherCourseCard({ course, onPress, onEdit, onPublish }) {
+export default function TeacherCourseCard({
+  course,
+  onPress,
+  onEdit,
+  onPublish,
+  onAddToBatch,
+  addToBatchLabel = 'Add to Batch',
+  addToBatchDisabled = false,
+}) {
   const statusLabel = getStatusLabel(course);
   const isPublished = statusLabel === 'Published';
 
@@ -39,6 +47,7 @@ export default function TeacherCourseCard({ course, onPress, onEdit, onPublish }
             <Text style={styles.meta}>
               {course?.category || 'Uncategorized'} - {course?.isFree ? 'Free' : `INR ${course?.price || 0}`}
             </Text>
+            <Text style={styles.meta}>Used in {course?.batchCount || 0} batches</Text>
           </View>
 
           <View style={[styles.statusPill, isPublished ? styles.statusPublished : styles.statusDraft]}>
@@ -56,6 +65,19 @@ export default function TeacherCourseCard({ course, onPress, onEdit, onPublish }
           <Pressable onPress={onEdit} style={({ pressed }) => [styles.secondaryAction, pressed ? styles.actionPressed : null]}>
             <Ionicons name="create-outline" size={16} color="#E2E8F0" />
             <Text style={styles.secondaryActionText}>Edit</Text>
+          </Pressable>
+
+          <Pressable
+            disabled={addToBatchDisabled}
+            onPress={onAddToBatch}
+            style={({ pressed }) => [
+              styles.secondaryAction,
+              addToBatchDisabled ? styles.secondaryActionDisabled : null,
+              pressed && !addToBatchDisabled ? styles.actionPressed : null,
+            ]}
+          >
+            <Ionicons name="albums-outline" size={16} color="#E2E8F0" />
+            <Text style={styles.secondaryActionText}>{addToBatchLabel}</Text>
           </Pressable>
 
           <Pressable
@@ -86,7 +108,6 @@ const styles = StyleSheet.create({
   },
   cardPressed: {
     opacity: 0.92,
-    transform: [{ scale: 0.995 }],
   },
   mediaShell: {
     height: 156,
@@ -171,6 +192,9 @@ const styles = StyleSheet.create({
     color: '#E2E8F0',
     fontSize: 14,
     fontWeight: '700',
+  },
+  secondaryActionDisabled: {
+    opacity: 0.6,
   },
   primaryAction: {
     flex: 1,

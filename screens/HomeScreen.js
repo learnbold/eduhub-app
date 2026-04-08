@@ -228,7 +228,6 @@ const styles = StyleSheet.create({
   },
   avatarButtonPressed: {
     opacity: 0.88,
-    transform: [{ scale: 0.98 }],
   },
   avatarButtonText: {
     color: '#F8FAFC',

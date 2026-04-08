@@ -178,10 +178,14 @@ export default function PlayerScreen({ navigation, route }) {
           </View>
 
           <View style={styles.navControls}>
-            <Pressable 
-              onPress={handlePrev} 
+            <Pressable
+              onPress={handlePrev}
               disabled={currentIndex <= 0}
-              style={[styles.navButton, currentIndex <= 0 && styles.navButtonDisabled]}
+              style={({ pressed }) => [
+                styles.navButton,
+                pressed && currentIndex > 0 ? styles.navButtonPressed : null,
+                currentIndex <= 0 ? styles.navButtonDisabled : null,
+              ]}
             >
               <Ionicons name="play-skip-back" size={20} color={currentIndex <= 0 ? "#475569" : "#F8FAFC"} />
               <Text style={[styles.navButtonText, currentIndex <= 0 && styles.navButtonTextDisabled]}>Prev</Text>
@@ -189,10 +193,14 @@ export default function PlayerScreen({ navigation, route }) {
             <Text style={styles.progressText}>
               {currentIndex + 1} / {allLessons.length}
             </Text>
-            <Pressable 
-              onPress={handleNext} 
+            <Pressable
+              onPress={handleNext}
               disabled={currentIndex >= allLessons.length - 1}
-              style={[styles.navButton, currentIndex >= allLessons.length - 1 && styles.navButtonDisabled]}
+              style={({ pressed }) => [
+                styles.navButton,
+                pressed && currentIndex < allLessons.length - 1 ? styles.navButtonPressed : null,
+                currentIndex >= allLessons.length - 1 ? styles.navButtonDisabled : null,
+              ]}
             >
               <Text style={[styles.navButtonText, currentIndex >= allLessons.length - 1 && styles.navButtonTextDisabled]}>Next</Text>
               <Ionicons name="play-skip-forward" size={20} color={currentIndex >= allLessons.length - 1 ? "#475569" : "#F8FAFC"} />
@@ -272,6 +280,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    gap: 12,
     paddingHorizontal: 16,
     paddingVertical: 16,
     backgroundColor: '#111C34',
@@ -281,11 +290,17 @@ const styles = StyleSheet.create({
   navButton: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: '#1E293B',
-    paddingHorizontal: 16,
+    minHeight: 46,
+    minWidth: 104,
+    paddingHorizontal: 14,
     paddingVertical: 10,
-    borderRadius: 8,
+    borderRadius: 12,
     gap: 8,
+  },
+  navButtonPressed: {
+    opacity: 0.88,
   },
   navButtonDisabled: {
     backgroundColor: 'rgba(30, 41, 59, 0.5)',
@@ -299,9 +314,11 @@ const styles = StyleSheet.create({
     color: '#475569',
   },
   progressText: {
+    minWidth: 64,
     color: '#94A3B8',
     fontSize: 14,
     fontWeight: '600',
+    textAlign: 'center',
   },
   listContent: {
     padding: 16,

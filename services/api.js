@@ -168,6 +168,55 @@ export const normalizeLesson = (lesson) => {
   };
 };
 
+export const normalizeBatch = (batch) => {
+  if (!batch) {
+    return null;
+  }
+
+  return {
+    ...batch,
+    _id: batch._id || batch.id || '',
+    hubId:
+      typeof batch.hubId === 'string'
+        ? batch.hubId
+        : batch.hubId?._id || batch.hubId || '',
+    price: Number(batch.price || 0),
+    isPublished: batch.isPublished ?? true,
+    subscriptionType: batch.subscriptionType || 'one_time',
+    expiresAt: batch.expiresAt || null,
+    courses: Array.isArray(batch.courses) ? batch.courses.map(normalizeCourse).filter(Boolean) : [],
+    videos: Array.isArray(batch.videos) ? batch.videos.map(normalizeVideo).filter(Boolean) : [],
+    notes: Array.isArray(batch.notes) ? batch.notes : [],
+    students: Array.isArray(batch.students) ? batch.students.map(normalizeMember).filter(Boolean) : [],
+    enrollments: Array.isArray(batch.enrollments)
+      ? batch.enrollments.map((enrollment) => ({
+          ...enrollment,
+          userId:
+            enrollment?.userId && typeof enrollment.userId === 'object'
+              ? normalizeMember(enrollment.userId)
+              : enrollment?.userId || '',
+        }))
+      : [],
+    courseCount:
+      batch.courseCount !== undefined ? Number(batch.courseCount) : Array.isArray(batch.courses) ? batch.courses.length : 0,
+    videoCount:
+      batch.videoCount !== undefined ? Number(batch.videoCount) : Array.isArray(batch.videos) ? batch.videos.length : 0,
+    noteCount:
+      batch.noteCount !== undefined ? Number(batch.noteCount) : Array.isArray(batch.notes) ? batch.notes.length : 0,
+    studentCount:
+      batch.studentCount !== undefined
+        ? Number(batch.studentCount)
+        : Array.isArray(batch.students)
+          ? batch.students.length
+          : 0,
+    access: {
+      canManage: Boolean(batch.access?.canManage),
+      isEnrolled: Boolean(batch.access?.isEnrolled),
+      role: batch.access?.role || '',
+    },
+  };
+};
+
 let authToken = '';
 
 const apiClient = axios.create({
@@ -423,11 +472,61 @@ export const fetchManagedHubCourses = (hubId, signal) =>
 
 export const getHubCourses = fetchManagedHubCourses;
 
+export const fetchManagedHubBatches = (hubId, signal) =>
+  request(`/batches/hub/${hubId}`, { signal }, 'Failed to load hub batches.').then((data) =>
+    (Array.isArray(data) ? data : []).map(normalizeBatch).filter(Boolean)
+  );
+
+export const fetchManagedBatchById = (batchId, signal) =>
+  request(`/batches/${batchId}`, { signal }, 'Failed to load batch details.').then(normalizeBatch);
+
 export const fetchManagedCourseById = (courseId, signal) =>
   request(`/courses/id/${courseId}/manage`, { signal }, 'Failed to load course details.').then(normalizeCourse);
 
 export const createCourse = (payload) =>
   request('/courses', { method: 'POST', body: payload }, 'Failed to create course.').then(normalizeCourse);
+
+export const createBatch = (payload) =>
+  request('/batches', { method: 'POST', body: payload }, 'Failed to create batch.').then(normalizeBatch);
+
+export const updateBatch = (batchId, payload) =>
+  request(`/batches/${batchId}`, { method: 'PATCH', body: payload }, 'Failed to update batch.').then(
+    normalizeBatch
+  );
+
+export const addCourseToBatch = (batchId, courseId) =>
+  request(
+    `/batches/${batchId}/courses`,
+    { method: 'POST', body: { courseId } },
+    'Failed to add course to batch.'
+  ).then(normalizeBatch);
+
+export const addVideoToBatch = (batchId, videoId) =>
+  request(
+    `/batches/${batchId}/videos`,
+    { method: 'POST', body: { videoId } },
+    'Failed to add video to batch.'
+  ).then(normalizeBatch);
+
+export const removeCourseFromBatch = (batchId, courseId) =>
+  request(
+    `/batches/${batchId}/courses/${courseId}`,
+    { method: 'DELETE' },
+    'Failed to remove course from batch.'
+  ).then(normalizeBatch);
+
+export const removeVideoFromBatch = (batchId, videoId) =>
+  request(
+    `/batches/${batchId}/videos/${videoId}`,
+    { method: 'DELETE' },
+    'Failed to remove video from batch.'
+  ).then(normalizeBatch);
+
+export const enrollInBatch = (batchId) =>
+  request(`/batches/${batchId}/enroll`, { method: 'POST' }, 'Failed to enroll in batch.').then((response) => ({
+    ...response,
+    batch: normalizeBatch(response?.batch),
+  }));
 
 export const updateCourse = (courseId, payload) =>
   request(`/courses/${courseId}`, { method: 'PATCH', body: payload }, 'Failed to update course.').then(
