@@ -1,36 +1,42 @@
 import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function MyCoursesScreen({ navigation }) {
   return (
     <SafeAreaView style={styles.safeArea}>
-      <View style={styles.screen}>
-        <View style={styles.topBar}>
-          <View>
-            <Text style={styles.brand}>Sparklass</Text>
-            <Text style={styles.subtitle}>My Courses</Text>
+      <ScrollView
+        bounces={false}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.screen}>
+          <View style={styles.topBar}>
+            <View>
+              <Text style={styles.brand}>Sparklass</Text>
+              <Text style={styles.subtitle}>My Courses</Text>
+            </View>
+            <View style={styles.badge}>
+              <Text style={styles.badgeText}>Soon</Text>
+            </View>
           </View>
-          <View style={styles.badge}>
-            <Text style={styles.badgeText}>Soon</Text>
+
+          <View style={styles.heroCard}>
+            <Text style={styles.eyebrow}>Learning dashboard</Text>
+            <Text style={styles.title}>Your enrolled courses will appear here.</Text>
+            <Text style={styles.description}>
+              Track progress, revisit lessons, and jump back into playback from one polished place.
+            </Text>
+
+            <Pressable
+              onPress={() => navigation.navigate('HomeTab')}
+              style={({ pressed }) => [styles.button, pressed ? styles.buttonPressed : null]}
+            >
+              <Text style={styles.buttonText}>Explore catalog</Text>
+            </Pressable>
           </View>
         </View>
-
-        <View style={styles.heroCard}>
-          <Text style={styles.eyebrow}>Learning dashboard</Text>
-          <Text style={styles.title}>Your enrolled courses will appear here.</Text>
-          <Text style={styles.description}>
-            Track progress, revisit lessons, and jump back into playback from one polished place.
-          </Text>
-
-          <Pressable
-            onPress={() => navigation.navigate('HomeTab')}
-            style={({ pressed }) => [styles.button, pressed ? styles.buttonPressed : null]}
-          >
-            <Text style={styles.buttonText}>Explore catalog</Text>
-          </Pressable>
-        </View>
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -40,11 +46,15 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#0F172A',
   },
+  scrollContent: {
+    flexGrow: 1,
+  },
   screen: {
-    flex: 1,
     backgroundColor: '#0F172A',
     paddingHorizontal: 18,
     paddingTop: 12,
+    paddingBottom: 28,
+    minHeight: '100%',
   },
   topBar: {
     flexDirection: 'row',
@@ -113,7 +123,6 @@ const styles = StyleSheet.create({
   },
   buttonPressed: {
     opacity: 0.88,
-    transform: [{ scale: 0.99 }],
   },
   buttonText: {
     color: '#F8FAFC',

@@ -86,7 +86,6 @@ const styles = StyleSheet.create({
   },
   cardPressed: {
     opacity: 0.92,
-    transform: [{ scale: 0.995 }],
   },
   mediaShell: {
     height: 156,

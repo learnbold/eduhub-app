@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '../context/AuthContext';
 
@@ -17,60 +17,66 @@ export default function ProfileScreen({ navigation }) {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <View style={styles.screen}>
-        <View style={styles.header}>
-          <View>
-            <Text style={styles.brand}>Sparklass</Text>
-            <Text style={styles.subtitle}>Profile</Text>
-          </View>
-          <View style={styles.avatar}>
-            <Text style={styles.avatarText}>
-              {user?.name?.[0]?.toUpperCase() || user?.email?.[0]?.toUpperCase() || 'E'}
-            </Text>
-          </View>
-        </View>
-
-        <View style={styles.profileCard}>
-          <Text style={styles.eyebrow}>Account</Text>
-          <Text style={styles.title}>
-            {isAuthenticated ? user?.name || user?.email || 'Signed in learner' : 'Guest learner'}
-          </Text>
-          <Text style={styles.description}>
-            {isAuthenticated
-              ? 'Your profile, preferences, and course history will continue to expand here.'
-              : 'Sign in to unlock enrollments, playback, and your saved course library.'}
-          </Text>
-
-          <View style={styles.statusRow}>
-            <View style={styles.statusChip}>
-              <Text style={styles.statusChipText}>
-                {isAuthenticated ? 'Authenticated' : 'Not signed in'}
+      <ScrollView
+        bounces={false}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.screen}>
+          <View style={styles.header}>
+            <View>
+              <Text style={styles.brand}>Sparklass</Text>
+              <Text style={styles.subtitle}>Profile</Text>
+            </View>
+            <View style={styles.avatar}>
+              <Text style={styles.avatarText}>
+                {user?.name?.[0]?.toUpperCase() || user?.email?.[0]?.toUpperCase() || 'E'}
               </Text>
             </View>
           </View>
 
-          <Pressable
-            onPress={handlePrimaryAction}
-            style={({ pressed }) => [styles.primaryButton, pressed ? styles.buttonPressed : null]}
-          >
-            <Text style={styles.primaryButtonText}>
-              {isAuthenticated ? 'Sign out' : 'Go to Login'}
+          <View style={styles.profileCard}>
+            <Text style={styles.eyebrow}>Account</Text>
+            <Text style={styles.title}>
+              {isAuthenticated ? user?.name || user?.email || 'Signed in learner' : 'Guest learner'}
             </Text>
-          </Pressable>
+            <Text style={styles.description}>
+              {isAuthenticated
+                ? 'Your profile, preferences, and course history will continue to expand here.'
+                : 'Sign in to unlock enrollments, playback, and your saved course library.'}
+            </Text>
 
-          {!isAuthenticated ? (
+            <View style={styles.statusRow}>
+              <View style={styles.statusChip}>
+                <Text style={styles.statusChipText}>
+                  {isAuthenticated ? 'Authenticated' : 'Not signed in'}
+                </Text>
+              </View>
+            </View>
+
             <Pressable
-              onPress={() => navigation.navigate('Register')}
-              style={({ pressed }) => [
-                styles.secondaryButton,
-                pressed ? styles.buttonPressed : null,
-              ]}
+              onPress={handlePrimaryAction}
+              style={({ pressed }) => [styles.primaryButton, pressed ? styles.buttonPressed : null]}
             >
-              <Text style={styles.secondaryButtonText}>Create account</Text>
+              <Text style={styles.primaryButtonText}>
+                {isAuthenticated ? 'Sign out' : 'Go to Login'}
+              </Text>
             </Pressable>
-          ) : null}
+
+            {!isAuthenticated ? (
+              <Pressable
+                onPress={() => navigation.navigate('Register')}
+                style={({ pressed }) => [
+                  styles.secondaryButton,
+                  pressed ? styles.buttonPressed : null,
+                ]}
+              >
+                <Text style={styles.secondaryButtonText}>Create account</Text>
+              </Pressable>
+            ) : null}
+          </View>
         </View>
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -80,11 +86,15 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#0F172A',
   },
+  scrollContent: {
+    flexGrow: 1,
+  },
   screen: {
-    flex: 1,
     backgroundColor: '#0F172A',
     paddingHorizontal: 18,
     paddingTop: 12,
+    paddingBottom: 28,
+    minHeight: '100%',
   },
   header: {
     flexDirection: 'row',
@@ -181,7 +191,6 @@ const styles = StyleSheet.create({
   },
   buttonPressed: {
     opacity: 0.88,
-    transform: [{ scale: 0.99 }],
   },
   primaryButtonText: {
     color: '#F8FAFC',
