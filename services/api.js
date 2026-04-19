@@ -14,6 +14,7 @@ const DEFAULT_API_BASE_URL = Platform.select({
 });
 
 export const API_BASE_URL = (process.env.EXPO_PUBLIC_API_BASE_URL || DEFAULT_API_BASE_URL || '').replace(/\/+$/, '');
+const VIDEO_API_ROOT = '/videos';
 
 const buildErrorMessage = (payload, fallbackMessage) => {
   if (payload?.message) {
@@ -573,22 +574,22 @@ export const attachLessonVideo = (lessonId, videoId) =>
 
 // VIDEOS
 export const fetchManagedCourseVideos = (courseId, signal) =>
-  request(`/videos/course/${courseId}/manage`, { signal }, 'Failed to load course videos.').then((data) =>
+  request(`${VIDEO_API_ROOT}/course/${courseId}/manage`, { signal }, 'Failed to load course videos.').then((data) =>
     (Array.isArray(data) ? data : []).map(normalizeVideo).filter(Boolean)
   );
 
 export const fetchManagedHubVideos = (hubId, signal) =>
-  request(`/videos/hub/${hubId}/manage`, { signal }, 'Failed to load hub videos.').then((data) =>
+  request(`${VIDEO_API_ROOT}/hub/${hubId}/manage`, { signal }, 'Failed to load hub videos.').then((data) =>
     (Array.isArray(data) ? data : []).map(normalizeVideo).filter(Boolean)
   );
 
 export const fetchPublicHubStandaloneVideos = (hubId, signal) =>
-  request(`/videos/hub/${hubId}/standalone`, { signal }, 'Failed to load hub updates.').then((data) =>
+  request(`${VIDEO_API_ROOT}/hub/${hubId}/standalone`, { signal }, 'Failed to load hub updates.').then((data) =>
     (Array.isArray(data) ? data : []).map(normalizeVideo).filter(Boolean)
   );
 
 export const getVideos = (courseId, signal) =>
-  request(`/videos/course/${courseId}/playback`, { signal }, 'Failed to load course videos.').then((data) =>
+  request(`${VIDEO_API_ROOT}/course/${courseId}/playback`, { signal }, 'Failed to load course videos.').then((data) =>
     (Array.isArray(data) ? data : Array.isArray(data?.videos) ? data.videos : [])
       .map(normalizeVideo)
       .filter(Boolean)
@@ -607,7 +608,7 @@ export const getVideoFileType = (file) => {
 };
 
 export const requestVideoUploadUrl = (payload) =>
-  request('/videos/upload-url', { method: 'POST', body: payload }, 'Failed to prepare the video upload.');
+  request(`${VIDEO_API_ROOT}/upload-url`, { method: 'POST', body: payload }, 'Failed to prepare the video upload.');
 
 export const uploadVideoFile = async (uploadUrl, fileBody, mimeTypeOrExtension) => {
   const contentType = String(mimeTypeOrExtension || '').includes('/')
@@ -646,12 +647,12 @@ export const uploadVideoFile = async (uploadUrl, fileBody, mimeTypeOrExtension) 
 };
 
 export const createVideo = (payload) =>
-  request('/videos', { method: 'POST', body: payload }, 'Failed to save the uploaded video.').then(
+  request(VIDEO_API_ROOT, { method: 'POST', body: payload }, 'Failed to save the uploaded video.').then(
     normalizeVideo
   );
 
 export const processVideo = (videoId) =>
-  request(`/videos/${videoId}/process`, { method: 'POST' }, 'Failed to start video processing.');
+  request(`${VIDEO_API_ROOT}/${videoId}/process`, { method: 'POST' }, 'Failed to start video processing.');
 
 export { apiClient };
 
